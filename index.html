@@ -1,0 +1,57 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LabLens | Smart Instrument Finder</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="hero">
+<nav>
+<div class="logo">■ LabLens</div>
+<a href="#finder">Instrument Finder</a>
+</nav>
+<div class="hero-content">
+<p class="eyebrow">SMART LABORATORY TOOLS</p>
+<h1>Find the right instrument for your experiment.</h1>
+<p>Search, filter and compare laboratory instruments using your application, technology and budget.</p>
+<a class="hero-btn" href="#finder">Start Finding →</a>
+</div>
+</header>
+<main id="finder" class="container">
+<section class="panel">
+<h2>Instrument Finder</h2>
+<div class="controls">
+<input id="search" placeholder="Try: protein, DNA, centrifuge...">
+<select id="application">
+<option value="">All applications</option>
+<option>Molecular Biology</option>
+<option>Biochemistry</option>
+<option>Sample Preparation</option>
+<option>Cell Culture</option>
+</select>
+<select id="budget">
+<option value="">Any budget</option>
+<option value="1">Under ₹2L</option>
+<option value="2"> ₹2L– ₹5L</option>
+<option value="3">Above  ₹5L</option>
+</select>
+</div>
+</section>
+<section class="stats">
+<div><span>Instruments</span><strong id="count">0</strong></div>
+<div><span>Categories</span><strong>4</strong></div>
+<div><span>Smart Match</span><strong>ON</strong></div>
+</section>
+<section id="recommendation" class="recommendation"></section>
+<section id="results" class="grid"></section>
+<section class="panel compare-panel">
+<h2>Why this project is useful</h2>
+<p>LabLens demonstrates search, filtering, recommendation logic, responsive UI and client-side data persistence in one compact portfolio project.</p>
+</section>
+</main>
+<footer>Built with HTML, CSS & JavaScript • LabLens</footer>
+<script src="script.js"></script>
+</body>
+</html>
