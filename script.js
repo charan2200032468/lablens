@@ -171,7 +171,27 @@ loadInstruments();
 
 // Back button
 document.getElementById("back-btn").addEventListener("click", hideDetails);
+// ========== SHORTLIST (Step 8) ==========
+let shortlist = JSON.parse(localStorage.getItem("lablens-shortlist") || "[]");
 
+function addToShortlist(id) {
+  if (!shortlist.includes(id)) {
+    shortlist.push(id);
+    localStorage.setItem("lablens-shortlist", JSON.stringify(shortlist));
+    alert("Instrument added to Shortlist!");
+  } else {
+    alert("Already in Shortlist");
+  }
+}
+
+// Shortlist button
+document.getElementById("shortlist-btn").addEventListener("click", function() {
+  const name = document.getElementById("detail-name").textContent;
+  const item = instruments.find(i => i.name === name);
+  if (item) {
+    addToShortlist(item.id);
+  }
+});
 // Shortlist button
 document.getElementById("shortlist-btn").addEventListener("click", function() {
   const name = document.getElementById("detail-name").textContent;
