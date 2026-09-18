@@ -34,6 +34,7 @@ async function loadInstruments() {
       }
     });
 
+    updateShortlistCount();
     render();
   } catch (err) {
     console.error(err);
@@ -102,20 +103,12 @@ function render() {
   }
 }
 
-// Details View
+// ========== DETAILS ==========
 function showDetails(id) {
   const item = instruments.find(i => i.id === id);
   if (!item) return;
 
-  document.getElementById("results").style.display = "none";
-  document.getElementById("recommendation").style.display = "none";
-
-  const stats = document.querySelector(".stats");
-  if (stats) stats.style.display = "none";
-
-  const controlsPanel = document.querySelector(".controls")?.parentElement;
-  if (controlsPanel) controlsPanel.style.display = "none";
-
+  hideAllPanels();
   document.getElementById("details-panel").style.display = "block";
 
   document.getElementById("detail-name").textContent = item.name;
@@ -137,7 +130,86 @@ function showDetails(id) {
 }
 
 function hideDetails() {
+  showMainList();
+}
+
+// ========== SHORTLIST ==========
+function updateShortlistCount() {
+  const el = document.getElementById("shortlist-count");
+  if (el) el.textContent = shortlist.length;
+}
+
+function addToShortlist(id) {
+  if (!shortlist.includes(id)) {
+    shortlist.push(id);
+    localStorage.setItem("lablens-shortlist", JSON.stringify(shortlist));
+    updateShortlistCount();
+    showMessage("Added to Shortlist successfully!");
+  } else {
+    showMessage("This instrument is already in your Shortlist.");
+  }
+}
+
+function removeFromShortlist(id) {
+  shortlist = shortlist.filter(itemId => itemId !== id);
+  localStorage.setItem("lablens-shortlist", JSON.stringify(shortlist));
+  updateShortlistCount();
+  renderShortlist();
+  showMessage("Removed from Shortlist.");
+}
+
+function renderShortlist() {
+  const container = document.getElementById("shortlist-items");
+  const emptyMsg = document.getElementById("shortlist-empty");
+
+  if (shortlist.length === 0) {
+    container.innerHTML = "";
+    emptyMsg.style.display = "block";
+    return;
+  }
+
+  emptyMsg.style.display = "none";
+
+  const items = instruments.filter(item => shortlist.includes(item.id));
+
+  container.innerHTML = items.map(item => `
+    <article class="instrument-card" style="margin-bottom: 1rem;">
+      <div class="icon">${item.icon || "🔬"}</div>
+      <h3>${item.name}</h3>
+      <span class="tag">${item.application}</span>
+      <span class="tag">${item.technology}</span>
+      <p>${item.description}</p>
+      <strong>${item.price}</strong>
+      <div style="margin-top: 0.8rem; display: flex; gap: 0.6rem;">
+        <button class="details-btn" onclick="showDetails(${item.id})">View Details</button>
+        <button class="details-btn" style="background:#dc2626;" onclick="removeFromShortlist(${item.id})">Remove</button>
+      </div>
+    </article>
+  `).join("");
+}
+
+function showShortlist() {
+  hideAllPanels();
+  document.getElementById("shortlist-panel").style.display = "block";
+  renderShortlist();
+}
+
+function hideAllPanels() {
+  document.getElementById("results").style.display = "none";
+  document.getElementById("recommendation").style.display = "none";
   document.getElementById("details-panel").style.display = "none";
+  document.getElementById("shortlist-panel").style.display = "none";
+
+  const stats = document.querySelector(".stats");
+  if (stats) stats.style.display = "none";
+
+  const controlsPanel = document.querySelector(".controls")?.parentElement;
+  if (controlsPanel) controlsPanel.style.display = "none";
+}
+
+function showMainList() {
+  document.getElementById("details-panel").style.display = "none";
+  document.getElementById("shortlist-panel").style.display = "none";
   document.getElementById("results").style.display = "";
   document.getElementById("recommendation").style.display = "";
 
@@ -148,14 +220,27 @@ function hideDetails() {
   if (controlsPanel) controlsPanel.style.display = "";
 }
 
-function addToShortlist(id) {
-  if (!shortlist.includes(id)) {
-    shortlist.push(id);
-    localStorage.setItem("lablens-shortlist", JSON.stringify(shortlist));
-    alert("Instrument added to Shortlist!");
-  } else {
-    alert("Already in Shortlist");
+// Simple nice message (instead of basic alert)
+function showMessage(text) {
+  // Create a temporary message box
+  let msg = document.getElementById("temp-message");
+  if (!msg) {
+    msg = document.createElement("div");
+    msg.id = "temp-message";
+    msg.style.cssText = `
+      position: fixed; top: 20px; right: 20px; 
+      background: #0f766e; color: white; 
+      padding: 12px 20px; border-radius: 8px; 
+      z-index: 9999; font-weight: 500;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    `;
+    document.body.appendChild(msg);
   }
+  msg.textContent = text;
+  msg.style.display = "block";
+  setTimeout(() => {
+    msg.style.display = "none";
+  }, 2500);
 }
 
 // Event listeners
@@ -163,22 +248,28 @@ search.addEventListener("input", render);
 application.addEventListener("change", render);
 budget.addEventListener("change", render);
 
-// Safe event listeners (will not crash if element is missing)
 const backBtn = document.getElementById("back-btn");
-if (backBtn) {
-  backBtn.addEventListener("click", hideDetails);
-}
+if (backBtn) backBtn.addEventListener("click", hideDetails);
+
+const backFromShortlist = document.getElementById("back-from-shortlist");
+if (backFromShortlist) backFromShortlist.addEventListener("click", showMainList);
 
 const shortlistBtn = document.getElementById("shortlist-btn");
 if (shortlistBtn) {
   shortlistBtn.addEventListener("click", function() {
     const name = document.getElementById("detail-name").textContent;
     const item = instruments.find(i => i.name === name);
-    if (item) {
-      addToShortlist(item.id);
-    }
+    if (item) addToShortlist(item.id);
   });
 }
 
-// Start loading
+const viewShortlistBtn = document.getElementById("view-shortlist-btn");
+if (viewShortlistBtn) {
+  viewShortlistBtn.addEventListener("click", function(e) {
+    e.preventDefault();
+    showShortlist();
+  });
+}
+
+// Start
 loadInstruments();
