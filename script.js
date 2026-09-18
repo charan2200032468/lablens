@@ -1,5 +1,6 @@
 // LabLens V2 - Load instruments from JSON
 let instruments = [];
+let shortlist = JSON.parse(localStorage.getItem("lablens-shortlist") || "[]");
 
 const search = document.getElementById("search");
 const application = document.getElementById("application");
@@ -15,7 +16,6 @@ async function loadInstruments() {
     if (!response.ok) throw new Error("Failed to load instruments.json");
     instruments = await response.json();
 
-    // Add simple icons for display
     const icons = {
       "Spectrophotometer": "🔬",
       "Fluorescence Instrument": "✨",
@@ -102,7 +102,7 @@ function render() {
   }
 }
 
-// Details View (Step 6)
+// Details View
 function showDetails(id) {
   const item = instruments.find(i => i.id === id);
   if (!item) return;
@@ -116,8 +116,7 @@ function showDetails(id) {
   const controlsPanel = document.querySelector(".controls")?.parentElement;
   if (controlsPanel) controlsPanel.style.display = "none";
 
-  const panel = document.getElementById("details-panel");
-  panel.style.display = "block";
+  document.getElementById("details-panel").style.display = "block";
 
   document.getElementById("detail-name").textContent = item.name;
   document.getElementById("detail-desc").textContent = item.description;
@@ -149,9 +148,6 @@ function hideDetails() {
   if (controlsPanel) controlsPanel.style.display = "";
 }
 
-// ========== SHORTLIST (Step 8) ==========
-let shortlist = JSON.parse(localStorage.getItem("lablens-shortlist") || "[]");
-
 function addToShortlist(id) {
   if (!shortlist.includes(id)) {
     shortlist.push(id);
@@ -162,41 +158,27 @@ function addToShortlist(id) {
   }
 }
 
+// Event listeners
 search.addEventListener("input", render);
 application.addEventListener("change", render);
 budget.addEventListener("change", render);
 
-// Start by loading the JSON
-loadInstruments();
-
-// Back button
-document.getElementById("back-btn").addEventListener("click", hideDetails);
-// ========== SHORTLIST (Step 8) ==========
-let shortlist = JSON.parse(localStorage.getItem("lablens-shortlist") || "[]");
-
-function addToShortlist(id) {
-  if (!shortlist.includes(id)) {
-    shortlist.push(id);
-    localStorage.setItem("lablens-shortlist", JSON.stringify(shortlist));
-    alert("Instrument added to Shortlist!");
-  } else {
-    alert("Already in Shortlist");
-  }
+// Safe event listeners (will not crash if element is missing)
+const backBtn = document.getElementById("back-btn");
+if (backBtn) {
+  backBtn.addEventListener("click", hideDetails);
 }
 
-// Shortlist button
-document.getElementById("shortlist-btn").addEventListener("click", function() {
-  const name = document.getElementById("detail-name").textContent;
-  const item = instruments.find(i => i.name === name);
-  if (item) {
-    addToShortlist(item.id);
-  }
-});
-// Shortlist button
-document.getElementById("shortlist-btn").addEventListener("click", function() {
-  const name = document.getElementById("detail-name").textContent;
-  const item = instruments.find(i => i.name === name);
-  if (item) {
-    addToShortlist(item.id);
-  }
-});
+const shortlistBtn = document.getElementById("shortlist-btn");
+if (shortlistBtn) {
+  shortlistBtn.addEventListener("click", function() {
+    const name = document.getElementById("detail-name").textContent;
+    const item = instruments.find(i => i.name === name);
+    if (item) {
+      addToShortlist(item.id);
+    }
+  });
+}
+
+// Start loading
+loadInstruments();
