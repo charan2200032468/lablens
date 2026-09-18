@@ -103,22 +103,53 @@ function render() {
   }
 }
 
-// Simple details popup (we will improve this in Step 6)
+// Details View (Step 6)
 function showDetails(id) {
   const item = instruments.find(i => i.id === id);
   if (!item) return;
 
-  alert(
-    item.name + "\n\n" +
-    "Category: " + item.category + "\n" +
-    "Application: " + item.application + "\n" +
-    "Technology: " + item.technology + "\n" +
-    "Price: " + item.price + "\n\n" +
-    item.description + "\n\n" +
-    "Measurement: " + (item.specifications?.measurement || "") + "\n" +
-    "Sample Type: " + (item.specifications?.sampleType || "") + "\n" +
-    "Use Case: " + (item.specifications?.useCase || "")
-  );
+  // Hide list and show details
+  document.getElementById("results").style.display = "none";
+  document.getElementById("recommendation").style.display = "none";
+
+  const stats = document.querySelector(".stats");
+  if (stats) stats.style.display = "none";
+
+  const controlsPanel = document.querySelector(".controls")?.parentElement;
+  if (controlsPanel) controlsPanel.style.display = "none";
+
+  const panel = document.getElementById("details-panel");
+  panel.style.display = "block";
+
+  // Fill details
+  document.getElementById("detail-name").textContent = item.name;
+  document.getElementById("detail-desc").textContent = item.description;
+  document.getElementById("detail-price").textContent = item.price;
+
+  document.getElementById("detail-tags").innerHTML = `
+    <span class="tag">${item.category || ""}</span>
+    <span class="tag">${item.application || ""}</span>
+    <span class="tag">${item.technology || ""}</span>
+  `;
+
+  const specs = item.specifications || {};
+  document.getElementById("detail-specs").innerHTML = `
+    <li><strong>Measurement:</strong> ${specs.measurement || "—"}</li>
+    <li><strong>Sample Type:</strong> ${specs.sampleType || "—"}</li>
+    <li><strong>Use Case:</strong> ${specs.useCase || "—"}</li>
+  `;
+}
+
+function hideDetails() {
+  document.getElementById("details-panel").style.display = "none";
+  document.getElementById("results").style.display = "";
+  document.getElementById("recommendation").style.display = "";
+
+  const stats = document.querySelector(".stats");
+  if (stats) stats.style.display = "";
+
+  const controlsPanel = document.querySelector(".controls")?.parentElement;
+  if (controlsPanel) controlsPanel.style.display = "";
 }
 
 search.addEventListener("input", render);
@@ -127,3 +158,6 @@ budget.addEventListener("change", render);
 
 // Start by loading the JSON
 loadInstruments();
+
+// Back button
+document.getElementById("back-btn").addEventListener("click", hideDetails);
