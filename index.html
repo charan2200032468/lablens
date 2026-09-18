@@ -9,14 +9,15 @@
 <body>
 <header class="hero">
 <nav>
-<div class="logo">■ LabLens</div>
-<a href="#finder">Instrument Finder</a>
+  <div class="logo">■ LabLens</div>
+  <a href="#finder">Instrument Finder</a>
+  <a href="#" id="view-shortlist-btn">My Shortlist (<span id="shortlist-count">0</span>)</a>
 </nav>
 <div class="hero-content">
-<p class="eyebrow">SMART LABORATORY TOOLS</p>
-<h1>Find the right instrument for your experiment.</h1>
-<p>Search, filter and compare laboratory instruments using your application, technology and budget.</p>
-<a class="hero-btn" href="#finder">Start Finding →</a>
+  <p class="eyebrow">SMART LABORATORY TOOLS</p>
+  <h1>Find the right instrument for your experiment.</h1>
+  <p>Search, filter and compare laboratory instruments using your application, technology and budget.</p>
+  <a class="hero-btn" href="#finder">Start Finding →</a>
 </div>
 </header>
 
@@ -51,7 +52,7 @@
 
   <section id="results" class="grid"></section>
 
-  <!-- Details Panel (Step 6) -->
+  <!-- Details Panel -->
   <section id="details-panel" class="panel" style="display: none;">
     <button id="back-btn" class="hero-btn" style="margin-bottom: 1rem;">← Back to list</button>
     
@@ -70,6 +71,14 @@
       <button id="shortlist-btn" class="hero-btn">Save / Shortlist</button>
       <button id="compare-btn" class="hero-btn">Add to Compare</button>
     </div>
+  </section>
+
+  <!-- Shortlist Panel -->
+  <section id="shortlist-panel" class="panel" style="display: none;">
+    <button id="back-from-shortlist" class="hero-btn" style="margin-bottom: 1rem;">← Back to list</button>
+    <h2>My Shortlist</h2>
+    <div id="shortlist-items"></div>
+    <p id="shortlist-empty" style="display: none; color: #666;">Your shortlist is empty. Add instruments using the Save / Shortlist button.</p>
   </section>
 
   <section class="panel compare-panel">
